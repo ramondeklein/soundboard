@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import Sample from '../model/sample';
-import { PlayService } from '../play.service';
+import { PlayListService } from '../playlist.service';
 import formatDate from 'src/utils/formatDate';
 
 @Component({
@@ -11,7 +11,7 @@ import formatDate from 'src/utils/formatDate';
 export class SampleComponent {
   @Input() sample: Sample;
 
-  constructor(private playService: PlayService) {
+  constructor(private playListService: PlayListService) {
   }
 
   formatDate(date?: Date) {
@@ -19,6 +19,6 @@ export class SampleComponent {
   }
 
   onPlay(): void {
-    this.playService.enqueueSample(this.sample);
+    this.playListService.enqueueSample(this.sample).subscribe();
   }
 }

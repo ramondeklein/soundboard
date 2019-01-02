@@ -1,19 +1,25 @@
-import { Component, OnInit } from '@angular/core';
-import Category from '../model/category';
-import { PlayService} from '../play.service';
+import { Component } from '@angular/core';
+import { CatalogService} from '../catalog.service';
 
 @Component({
   selector: 'app-categories',
   templateUrl: './categories.component.html',
   styleUrls: ['./categories.component.scss']
 })
-export class CategoriesComponent implements OnInit {
-  public categories: Category[];
-
-  constructor(private playService: PlayService) {
+export class CategoriesComponent {
+  constructor(private catalogService: CatalogService) {
   }
 
-  ngOnInit() {
-    this.playService.getCategories().subscribe((categories) => this.categories = categories);
+  public getCatagories()
+  {
+    return this.catalogService.getCatagories();
+  }
+
+  public onScan() {
+    this.catalogService.scan().subscribe();
+  }
+
+  public onRefresh() {
+    this.catalogService.refresh();
   }
 }

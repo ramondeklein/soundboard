@@ -12,28 +12,27 @@ using Soundboard.Server.Services;
 
 namespace Soundboard.Server.Controllers
 {
-    [Route("api/[controller]/[action]")]
     [ApiController]
+    [Route("api/[controller]/[action]")]
     public class SamplesController : ControllerBase
     {
         private readonly ISamplesService _samplesService;
-        private readonly IHubContext<SoundboardHub> _hubContext;
 
-        public SamplesController(ISamplesService samplesService, IHubContext<SoundboardHub> hubContext)
+        public SamplesController(ISamplesService samplesService)
         {
             _samplesService = samplesService;
-            _hubContext = hubContext;
         }
 
         [HttpGet]
-        public IEnumerable<Sample> GetSamples()
+        public IEnumerable<Sample> GetAll()
         {
             return _samplesService.GetSamples();
         }
 
-        [HttpGet()]
-        public ActionResult<Stream> GetSample([FromQuery(Name = "id")] string id)
+        [HttpGet]
+        public ActionResult<Stream> GetStream([FromQuery(Name = "id")] string id)
         {
+            // TODO: Make sure this one will be cached
             try
             {
                 var sampleFile = _samplesService.GetSampleFile(id);
@@ -46,9 +45,25 @@ namespace Soundboard.Server.Controllers
         }
 
         [HttpPost]
-        public void Scan()
+        public async Task Scan()
         {
-            _samplesService.Scan();
+            await _samplesService.ScanAsync();
+        }
+
+        public class IdClass { public string Id; }
+
+        [HttpPost]
+        public async Task<ActionResult> MarkAsPlayed(IdClass id)
+        {
+            try
+            {
+                await _samplesService.MarkSampleAsPlayedAsync(id.Id);
+                return Ok();
+            }
+            catch (SampleNotFoundException)
+            {
+                return NotFound();
+            }
         }
     }
 }

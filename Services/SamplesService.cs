@@ -7,33 +7,42 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using LiteDB;
-
+using Microsoft.AspNetCore.SignalR;
+using Soundboard.Server.Hubs;
 using Soundboard.Server.Model;
 
 namespace Soundboard.Server.Services
 {
     public class SamplesService : ISamplesService
     {
-        const string SamplesTable = "samples";
+        private const string SamplesTable = "samples";
+        private const string HubSampleEnqueuedEvent = "sampleEnqueued";
+        private const string HubSamplePoppedEvent = "samplePopped";
+        private const string HubSampleUpdated = "sampleUpdated";
+        private const string HubPlayListCleared = "playListCleared";
+        private const string HubScan = "scan";
+
 
         private readonly string _samplesRoot;
         private readonly string _databaseFile;
         private readonly IHasher _hasher;
+        private readonly IHubContext<SoundboardHub> _hubContext;
         private readonly object _scanLock = new object();
         private readonly IList<QueuedSample> _playList = new List<QueuedSample>();
 
-        public SamplesService(ISamplesConfiguration samplesConfiguration, IHasher hasher)
+        public SamplesService(ISamplesConfiguration samplesConfiguration, IHasher hasher, IHubContext<SoundboardHub> hubContext)
         {
             if (samplesConfiguration == null)
                 throw new ArgumentNullException(nameof(samplesConfiguration));
-            _samplesRoot = samplesConfiguration.SamplesRoot.Replace('\\', '/');
+            _samplesRoot = Path.GetFullPath(samplesConfiguration.SamplesRoot.Replace('\\', '/'));
             if (!_samplesRoot.EndsWith('/'))
                 _samplesRoot = _samplesRoot + '/';
             _databaseFile = samplesConfiguration.Database;
             _hasher = hasher;
+            _hubContext = hubContext;
         }
 
-        public void Scan()
+        public async Task ScanAsync()
         {
             lock (_scanLock)
             {
@@ -82,6 +91,8 @@ namespace Soundboard.Server.Services
                     }
                 }
             }
+
+            await _hubContext.Clients.All.SendAsync(HubScan);
         }
 
         public IEnumerable<Sample> GetSamples()
@@ -111,7 +122,7 @@ namespace Soundboard.Server.Services
                 };
         }
 
-        public void EnqueueSample(QueuedSample sample)
+        public async Task EnqueueSampleAsync(QueuedSample sample)
         {
             using (var db = GetDatabase())
             {
@@ -132,26 +143,33 @@ namespace Soundboard.Server.Services
             {
                 _playList.Add(sample);
             }
+
+            await _hubContext.Clients.All.SendAsync(HubSampleEnqueuedEvent, sample);
         }
 
-        public QueuedSample PopSample()
+        public async Task<QueuedSample> PopSampleAsync()
         {
+            QueuedSample poppedSample;
             lock (_playList)
             {
-                var firstSample = _playList.FirstOrDefault();
-                if (firstSample != null)
-                    _playList.RemoveAt(0);
-                return firstSample;
+                poppedSample = _playList.FirstOrDefault();
+                if (poppedSample == null)
+                    return null;
+                _playList.RemoveAt(0);
             }
+
+            await _hubContext.Clients.All.SendAsync(HubSamplePoppedEvent, poppedSample);
+            return poppedSample;
         }
 
-        public void ClearPlayList()
+        public async Task ClearPlayListAsync()
         {
-
             lock (_playList)
             {
                 _playList.Clear();
             }
+            await _hubContext.Clients.All.SendAsync(HubPlayListCleared);
+            
         }
         
         public string GetSampleFile(string id)
@@ -169,7 +187,7 @@ namespace Soundboard.Server.Services
             }
         }
 
-        public Sample MarkSampleAsPlayed(string id)
+        public async Task MarkSampleAsPlayedAsync(string id)
         {
             using (var db = GetDatabase())
             {
@@ -183,7 +201,8 @@ namespace Soundboard.Server.Services
                 ++sampleData.PlayCount;
                 sampleCollection.Update(sampleData);
 
-                return Convert(sampleData);
+                var updatedSample = Convert(sampleData);
+                await _hubContext.Clients.All.SendAsync(HubSampleUpdated, updatedSample);
             }
         }
 

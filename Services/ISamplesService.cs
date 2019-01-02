@@ -1,16 +1,17 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Soundboard.Server.Model;
 
 namespace Soundboard.Server.Services
 {
     public interface ISamplesService
     {
-        void Scan();
+        Task ScanAsync();
         IEnumerable<Sample> GetSamples();
-        void EnqueueSample(QueuedSample sample);
-        QueuedSample PopSample();
-        void ClearPlayList();
+        Task EnqueueSampleAsync(QueuedSample sample);
+        Task<QueuedSample> PopSampleAsync();
+        Task ClearPlayListAsync();
         string GetSampleFile(string id);
-        Sample MarkSampleAsPlayed(string id);
+        Task MarkSampleAsPlayedAsync(string id);
     }
 }

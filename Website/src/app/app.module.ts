@@ -1,5 +1,8 @@
+import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
+import { MatIconModule, MatButtonModule } from '@angular/material';
 import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -11,6 +14,7 @@ import { CategoriesComponent } from './categories/categories.component';
 import { PlayerComponent } from './player/player.component';
 import { PlaylistComponent } from './playlist/playlist.component';
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -19,12 +23,16 @@ import { PlaylistComponent } from './playlist/playlist.component';
     HistoryComponent,
     CategoriesComponent,
     PlayerComponent,
-    PlaylistComponent
+    PlaylistComponent,
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
+    FormsModule,
     HttpClientModule,
-    AppRoutingModule
+    AppRoutingModule,
+    MatButtonModule,
+    MatIconModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

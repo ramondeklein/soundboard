@@ -11,7 +11,7 @@ class Sample {
     public getCategory = () => this.category;
     public getTitle = () => this.title;
     public getPlayCount = () => this.backEndSample.playCount;
-    public getLastPlayedUtc = () => new Date(this.backEndSample.lastPlayedUtc);
+    public getLastPlayedUtc = () => this.backEndSample.lastPlayedUtc && new Date(this.backEndSample.lastPlayedUtc);
 
     public updateFrom(backEndSample: IBackEndSample) {
         this.backEndSample = backEndSample;

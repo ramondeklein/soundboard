@@ -1,3 +1,12 @@
-<p>
-  player works!
-</p>
+<div>
+    <div>Is active player: {{getActivePlayer()}}</div>
+    <button mat-fab color="primary" (click)="toggleActivePlayer()">
+        <mat-icon>heart</mat-icon>
+    </button>
+
+    <form #form="ngForm" novalidate>
+        <label>description:</label>
+        <input type="text" name="description" [(ngModel)]="description" minlength="2" maxlength="35" #descriptionDir="ngModel">
+        <button type="button" [disabled]="form.invalid" (click)="onFormSubmit()">submit</button>
+    </form>
+</div>

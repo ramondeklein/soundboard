@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { PlayService } from '../play.service';
+import { PlayListService } from '../playlist.service';
 
 @Component({
   selector: 'app-playlist',
@@ -8,14 +8,14 @@ import { PlayService } from '../play.service';
 })
 export class PlaylistComponent {
 
-  constructor(private readonly playService: PlayService) {
+  constructor(private readonly playListService: PlayListService) {
   }
 
   getSamples() {
-    return this.playService.getPlayList();
+    return this.playListService.getPlayList();
   }
 
-  clearPlayList() {
-    return this.playService.clearPlayList();
+  public onClear() {
+    return this.playListService.clearPlayList().subscribe();
   }
 }

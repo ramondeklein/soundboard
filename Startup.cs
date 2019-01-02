@@ -44,6 +44,7 @@ namespace Soundboard.Server
             services.AddSignalR();
             services.AddTransient<IHasher, MD5Hasher>();
             services.AddSingleton<ISamplesService, SamplesService>();
+            services.AddSingleton<IPlayerService, PlayerService>();
             services.AddSingleton<ISamplesConfiguration>(new SamplesConfiguration(Configuration));
         }
 
@@ -70,7 +71,7 @@ namespace Soundboard.Server
             });
             app.UseSignalR(routes =>
             {
-                routes.MapHub<SoundboardHub>("/hub");
+                routes.MapHub<SoundboardHub>("/api/hub");
             });
             app.UseMvc();
 

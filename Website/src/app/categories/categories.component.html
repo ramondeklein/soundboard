@@ -1,6 +1,10 @@
-<ul class="category-container">
-  <li *ngFor="let category of categories">
-    <app-category [category]="category">
-    </app-category>
-  </li>
-</ul>
+<div>
+  <button (click)="onScan()">Scan</button>
+  <button (click)="onRefresh()">Refresh</button>
+  <ul class="category-container">
+    <li *ngFor="let category of getCatagories()">
+      <app-category [category]="category">
+      </app-category>
+    </li>
+  </ul>
+</div>

@@ -12,17 +12,15 @@ using Soundboard.Server.Services;
 
 namespace Soundboard.Server.Controllers
 {
-    [Route("api/[controller]/[action]")]
     [ApiController]
+    [Route("api/[controller]/[action]")]
     public class PlayListController : ControllerBase
     {
         private readonly ISamplesService _samplesService;
-        private readonly IHubContext<SoundboardHub> _hubContext;
 
-        public PlayListController(ISamplesService samplesService, IHubContext<SoundboardHub> hubContext)
+        public PlayListController(ISamplesService samplesService)
         {
             _samplesService = samplesService;
-            _hubContext = hubContext;
         }
 
         [HttpPost]
@@ -30,8 +28,7 @@ namespace Soundboard.Server.Controllers
         {
             try
             {
-                _samplesService.EnqueueSample(queuedSample);
-                await _hubContext.Clients.All.SendAsync("enqueued", queuedSample);
+                await _samplesService.EnqueueSampleAsync(queuedSample);
                 return Ok();
             }
             catch (SampleNotFoundException)
@@ -43,35 +40,18 @@ namespace Soundboard.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<QueuedSample>> Pop()
         {
-            var poppedSample = _samplesService.PopSample();
+            var poppedSample = await _samplesService.PopSampleAsync();
             if (poppedSample == null)
-                return NotFound();
+                return NoContent();
 
-            await _hubContext.Clients.All.SendAsync("popped", poppedSample);
             return Ok(poppedSample);
         }
 
-        [HttpPost]
+        [HttpDelete]
         public async Task<ActionResult> Clear()
         {
-            _samplesService.ClearPlayList();
-            await _hubContext.Clients.All.SendAsync("clearPlayList");
+            await _samplesService.ClearPlayListAsync();
             return Ok();
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> MarkAsPlayed(QueuedSample queuedSample)
-        {
-            try
-            {
-                var sample = _samplesService.MarkSampleAsPlayed(queuedSample.SampleId);
-                await _hubContext.Clients.All.SendAsync("update", sample);
-                return Ok();
-            }
-            catch (SampleNotFoundException)
-            {
-                return NotFound();
-            }
         }
     }
 }
