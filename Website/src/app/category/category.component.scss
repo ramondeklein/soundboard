@@ -1,0 +1,21 @@
+@import '../../assets//css/colors';
+
+div {
+    .category-title {
+        font-size: 20px;
+    }
+
+    ul {
+        display: flex;
+        flex-direction: row;
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        flex-wrap: wrap;
+    }
+
+    li.sample {
+        margin-right: 20px;
+        margin-bottom: 10px;
+    }
+}

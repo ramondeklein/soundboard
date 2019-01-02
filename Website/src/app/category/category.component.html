@@ -1,0 +1,8 @@
+<div>
+  <h1 class="category-title">{{getTitle()}}</h1>
+  <ul>
+    <li class="sample" *ngFor="let sample of category.getSamples()">
+      <app-sample [sample]="sample"></app-sample>
+    </li>
+  </ul>
+</div>

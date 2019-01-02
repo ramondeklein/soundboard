@@ -1,0 +1,7 @@
+<button (click)="onPlay()">
+    <h2 class="title">{{sample.getTitle()}}</h2>
+    <div>
+        <span class="lastPlayed">{{formatDate(sample.getLastPlayedUtc())}}</span>
+        <span class="playCount">{{sample.getPlayCount()}}x</span>
+    </div>
+</button>

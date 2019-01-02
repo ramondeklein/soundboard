@@ -1,0 +1,5 @@
+<ul>
+  <li *ngFor="let sample of lastSamples">
+    <div (click)="onPlay(sample)">{{formatDate(sample.getTimestamp())}}: {{sample.getTitle()}} ({{sample.getPlayCount()}})</div>
+  </li>
+</ul>

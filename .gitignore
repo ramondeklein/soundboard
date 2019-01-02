@@ -1,0 +1,23 @@
+# Media files
+/Media
+
+# Compiled .NET output
+/obj
+/bin
+
+# Compiled Website output
+/Website/dist
+/Website/tmp
+/Website/out-tsc
+/Website/.sass-cache
+
+# Packages
+/packages
+/Website/node_modules
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Database
+Soundboard.db
