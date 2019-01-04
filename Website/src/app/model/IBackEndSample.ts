@@ -1,6 +1,6 @@
-import IBackEndLocation from './IBackEndLocation';
+import { IBackEndLocation } from './IBackEndLocation';
 
-export default interface IBackEndSample {
+export interface IBackEndSample {
     id: string;
     playCount: number;
     addedUtc: Date;

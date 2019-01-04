@@ -1,6 +1,6 @@
-import Sample from './sample';
+import { Sample } from './sample';
 
-class Category {
+export class Category {
     constructor(private title: string, private readonly samples: Sample[] = []) {
     }
 
@@ -11,5 +11,3 @@ class Category {
     public getTitle = () => this.title;
     public getSamples = () => this.samples;
 }
-
-export default Category;

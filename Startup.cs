@@ -44,7 +44,7 @@ namespace Soundboard.Server
             services.AddSignalR();
             services.AddTransient<IHasher, MD5Hasher>();
             services.AddSingleton<ISamplesService, SamplesService>();
-            services.AddSingleton<IPlayerService, PlayerService>();
+            services.AddSingleton<IRegistrationService, RegistrationService>();
             services.AddSingleton<ISamplesConfiguration>(new SamplesConfiguration(Configuration));
         }
 

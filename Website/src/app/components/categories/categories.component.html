@@ -1,0 +1,11 @@
+<div>
+  <button (click)="onScan()">Scan</button>
+  <button (click)="onRefresh()">Refresh</button>
+  <input type="text" (keyup)="onKey($event)">
+  <ul class="category-container">
+    <li *ngFor="let category of getCatagories()">
+      <app-category [category]="category" [filter]="filter">
+      </app-category>
+    </li>
+  </ul>
+</div>

@@ -2,17 +2,18 @@ import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
-import { MatIconModule, MatButtonModule } from '@angular/material';
+import { MatIconModule, MatButtonModule, MatOptionModule, MatSelectModule } from '@angular/material';
 import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { CategoryComponent } from './category/category.component';
-import { SampleComponent } from './sample/sample.component';
-import { HistoryComponent } from './history/history.component';
-import { CategoriesComponent } from './categories/categories.component';
-import { PlayerComponent } from './player/player.component';
-import { PlaylistComponent } from './playlist/playlist.component';
+import { CategoryComponent } from './components/category/category.component';
+import { SampleComponent } from './components/sample/sample.component';
+import { HistoryComponent } from './components/history/history.component';
+import { CategoriesComponent } from './components/categories/categories.component';
+import { RegistrationComponent } from './components/registration/registration.component';
+import { PlaylistComponent } from './components/playlist/playlist.component';
+import { PlayerComponent } from './components/player/player.component';
 
 
 @NgModule({
@@ -22,8 +23,9 @@ import { PlaylistComponent } from './playlist/playlist.component';
     SampleComponent,
     HistoryComponent,
     CategoriesComponent,
-    PlayerComponent,
+    RegistrationComponent,
     PlaylistComponent,
+    PlayerComponent,
   ],
   imports: [
     BrowserModule,
@@ -31,6 +33,8 @@ import { PlaylistComponent } from './playlist/playlist.component';
     FormsModule,
     HttpClientModule,
     AppRoutingModule,
+    MatOptionModule,
+    MatSelectModule,
     MatButtonModule,
     MatIconModule,
   ],

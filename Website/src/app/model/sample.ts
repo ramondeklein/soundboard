@@ -1,7 +1,7 @@
-import IBackEndSample from './IBackEndSample';
-import Category from './category';
+import { IBackEndSample } from './IBackEndSample';
+import { Category } from './category';
 
-class Sample {
+export class Sample {
     constructor(private readonly category: Category, private readonly title: string, private backEndSample: IBackEndSample) {
         this.title = title;
         this.backEndSample = backEndSample;
@@ -17,5 +17,3 @@ class Sample {
         this.backEndSample = backEndSample;
     }
 }
-
-export default Sample;

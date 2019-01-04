@@ -1,0 +1,36 @@
+@import '../../../assets/css/colors';
+
+button {
+    width: 160px;
+    height: 120px;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+    text-align: center;
+    padding: 0;
+}
+
+h2 {
+    flex-grow: 0;
+    overflow: hidden;
+    margin: 0;
+    padding: 8px;
+
+    &::first-line {
+        font-size: 18px;
+    }
+    font-size: 12px;
+}
+
+div {
+    flex-grow: 0;
+    padding: 4px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 12px;
+}
+
+
