@@ -1,5 +1,5 @@
 <div>
-    <form #form="ngForm" novalidate>
+    <!-- <form #form="ngForm" novalidate>
         <mat-form-field>
             <mat-select [(value)]="activeRegistrationId">
                 <mat-option *ngFor="let registration of getRegistrations()" value="{{registration.id}}">{{registration.description}}</mat-option>
@@ -9,5 +9,5 @@
         <label>description:</label>
         <input type="text" name="description" [(ngModel)]="description" minlength="2" maxlength="35" #descriptionDir="ngModel">
         <button type="button" [disabled]="form.invalid" (click)="onFormSubmit()">submit</button>
-    </form>
+    </form> -->
 </div>

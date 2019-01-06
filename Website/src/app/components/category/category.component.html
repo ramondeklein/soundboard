@@ -1,5 +1,5 @@
 <div *ngIf="hasSamples()">
-  <h1>{{getTitle()}}</h1>
+  <h2>{{getTitle()}}</h2>
   <ul>
     <li *ngFor="let sample of getSamples()">
       <app-sample [sample]="sample"></app-sample>

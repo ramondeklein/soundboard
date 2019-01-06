@@ -1,45 +1,56 @@
 @import "./assets/css/colors";
 
 $header-height: 75px;
+$mobile-header-height: 68px;
+$mobile-filter-height: 44px;
 $sidebar-width: 400px;
-
 
 body {
     font-family: Roboto, 'Open Sans', Arial, sans-serif;
     margin: 0;
     background-color: $background-color;
+    color: $text-color;
 }
 
 * {
     box-sizing: border-box;
+
+    &:focus {
+        color: $light-text-color !important;
+        outline: none;
+    }
 }
 
-app-header {
+.header {
     position: fixed;
     left: 0;
     right: 0;
     top: 0;
     height: $header-height;
     background-color: $light-background-color;
-    color: $text-color;
     border-bottom: 1px solid $text-color;
 
     app-logo {
-        margin: 10px;
         float: left;
         fill: $text-color;
-
+        padding: 10px;
     }
 
     app-player {
+        display: block;
         float: right;
         height: 100%;
         width: $sidebar-width;
         border-left: 1px solid $text-color;
     }
+
+    app-filter {
+        display: block;
+        padding: 10px;
+    }
 }
 
-app-sidebar {
+.sidebar {
     display: block;
     position: fixed;
     right: 0;
@@ -47,27 +58,10 @@ app-sidebar {
     bottom: 0;
     width: $sidebar-width;
     background-color: $light-background-color;
-    color: $text-color;
     border-left: 1px solid $text-color;
 
     li {
         padding: 0 5px;
-    }
-
-    h1 {
-        background-color: $background-color;
-        margin: 0;
-        padding: 5px;        
-        font-size: 100%;
-
-        button {
-            float: right;
-            color: $text-color;
-            border: 0;
-            background: none;
-            box-shadow: none;
-            border-radius: 0px;        
-        }
     }
 
     ul {
@@ -82,10 +76,15 @@ app-categories {
     margin-top: $header-height;
     margin-right: $sidebar-width;
 
-    h1 {
-        color: $text-color;
+    ul {
+        display: block;
+        list-style-type: none;
         margin: 0;
         padding: 5px;        
+    }
+    
+    h2 {
+        margin: 0;
         font-size: 120%;
     }
 
@@ -95,16 +94,21 @@ app-categories {
             flex-direction: column;
             width: 160px;
             height: 120px;
-            border: none;
+            border: 1px solid $light-background-color;
+            overflow: hidden;
             justify-content: space-between;
             align-items: stretch;
             text-align: center;
             padding: 0;
             color: $text-color;
             background-color: $light-background-color;
+
+            &:focus {
+                border-color: $text-color;
+            }
         }
 
-        h2 {
+        .title {
             flex-grow: 0;
             overflow: hidden;
             margin: 0;
@@ -112,7 +116,7 @@ app-categories {
             font-size: 12px;
         }
         
-        div {
+        .info {
             flex-grow: 0;
             padding: 4px;
             display: flex;
@@ -123,6 +127,38 @@ app-categories {
     }
 }
 
+h1 {
+    background-color: $background-color;
+    margin: 0;
+    padding: 5px;        
+    font-size: 100%;
+}
+
+.toolbar {
+    float: right;
+}
+
+button.flat {
+    color: $text-color;
+    border: 0;
+    background: none;
+    box-shadow: none;
+    border-radius: 0px;        
+}
+
+input {
+    border: 1px solid $dark-text-color;
+    background-color: $background-color;
+    border-radius: 10px;
+    color: $text-color;
+    padding: 3px 10px;
+
+    &:focus {
+        border-color: $text-color;
+    }
+}
+
+
 .nowrap {
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -132,19 +168,44 @@ app-categories {
 
 @media only screen and (max-width: $mobile-width) {
     app-logo {
-        display: none;
-    }
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: $mobile-header-height;
+        display: block;
+        background: $background-color;
 
-    app-header {
-        app-player {
-            float: none;
-            height: 100%;
-            width: 100%;
-            border: 0;
+        svg {
+            height: auto;
         }
     }
 
-    app-sidebar {
+    .header {
+        app-player {
+            display: block;
+            position: absolute;
+            float: none;
+            top: 0;
+            width: 100%;
+            height: auto;
+            background-color: $background-color;
+            z-index: 100;
+
+            .container {
+                height: $mobile-header-height;
+            }
+        }
+
+        app-filter {
+            margin-top: $header-height;
+            background-color: $background-color;
+            height: $mobile-filter-height;
+            border-bottom: 1px solid $text-color;
+        }
+    }
+
+    .sidebar {
         display: block;
         position: fixed;
         left: 0;
@@ -169,20 +230,21 @@ app-categories {
 
     app-categories {
         width: 100%;
+        margin-top: $mobile-header-height + $mobile-filter-height;
 
-        app-sample {
+        app-sample {           
             button {
-                display: block;
                 width: 100%;
                 height: 50px;
-                text-align: left;
             }
 
-            h2 {
-                white-space: nowrap;
-                text-overflow: ellipsis;
-                display: block;
-                overflow: hidden
+            .title {
+                padding: 2px;
+            }
+
+            .info {
+                font-size: 80%;
+                color: $dark-text-color;
             }
         }
     }

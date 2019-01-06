@@ -32,6 +32,9 @@ export class RegistrationService implements OnDestroy {
 
     this.api.registrationGetAll().subscribe((registrations) => {
       this.registrations = registrations;
+      this.api.registrationGetActive().subscribe((activeRegistration) => {
+        this.onSetActive(activeRegistration);
+      });
     });
 
     this.subscriptionContainer = new SubscriptionContainer(

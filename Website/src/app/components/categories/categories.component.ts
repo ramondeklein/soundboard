@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 import { CatalogService} from '../../services/catalog.service';
 
@@ -8,28 +8,12 @@ import { CatalogService} from '../../services/catalog.service';
   styleUrls: ['./categories.component.scss']
 })
 export class CategoriesComponent {
-  public filter?: string;
+  @Input() filter?: string;
 
   constructor(private catalogService: CatalogService) {
   }
 
   public getCatagories() {
     return this.catalogService.getCatagories();
-  }
-
-  public onKey(event: any) {
-    if (event.target.value) {
-      this.filter = event.target.value;
-    } else {
-      this.filter = undefined;
-    }
-  }
-
-  public onScan() {
-    this.catalogService.scan().subscribe();
-  }
-
-  public onRefresh() {
-    this.catalogService.refresh();
   }
 }

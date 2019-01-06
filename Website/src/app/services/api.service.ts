@@ -49,11 +49,6 @@ export class ApiService {
     this.onEvent('registrationRegistered', (registration: IRegistration) => this.onRegistrationRegistered.next(registration));
     this.onEvent('registrationUnregistered', (registration: IRegistration) => this.onRegistrationUnregistered.next(registration));
     this.onEvent('registrationActiveChanged', (registration: IRegistration) => this.onRegistrationActiveChanged.next(registration));
-
-    // Raise the initial event of the active registration
-    this.registrationGetActive().subscribe((activeRegistration) => {
-      this.onRegistrationActiveChanged.next(activeRegistration);
-    });
   }
 
   // Playlist API

@@ -26,23 +26,18 @@ export class CategoryComponent {
     let samples = this.category.getSamples();
     if (this.filter) {
       const lowerCaseFilter = this.filter.toLocaleLowerCase();
-      samples = samples.filter((s) => {
-        const title = s.getTitle().toLocaleLowerCase();
-        return title.indexOf(lowerCaseFilter) >= 0;
-      });
+      const categoryTitle = this.category.getTitle().toLocaleLowerCase();
+      if (categoryTitle.indexOf(lowerCaseFilter) === -1) {
+        samples = samples.filter((s) => {
+          const title = s.getTitle().toLocaleLowerCase();
+          return title.indexOf(lowerCaseFilter) >= 0;
+        });
+      }
     }
     return samples;
   }
 
   public hasSamples() {
-    let samples = this.category.getSamples();
-    if (this.filter) {
-      const lowerCaseFilter = this.filter.toLocaleLowerCase();
-      samples = samples.filter((s) => {
-        const title = s.getTitle().toLocaleLowerCase();
-        return title.indexOf(lowerCaseFilter) >= 0;
-      });
-    }
-    return samples.length > 0;
+    return this.getSamples().length > 0;
   }
 }

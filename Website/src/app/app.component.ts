@@ -1,14 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { FilterComponent } from './components/filter/filter.component';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
-  private title: string;
+export class AppComponent {
+  @ViewChild('filterComponent') filterComponent: FilterComponent;
+  public filter: string;
 
-  ngOnInit(): void {
-    this.title = 'soundboard';
+  onFilterChanged(newFilter: string) {
+    this.filter = newFilter;
+  }
+
+  onKey(event: KeyboardEvent) {
+    this.filterComponent.setFocus(event.key);
   }
 }

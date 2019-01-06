@@ -1,1 +1,10 @@
 @import '../../../assets/css/colors';
+
+:host {
+    width: auto;
+    height: 100%;
+
+    svg {
+        height: 100%;
+    }
+}
