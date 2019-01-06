@@ -122,6 +122,14 @@ namespace Soundboard.Server.Services
                 };
         }
 
+        public IEnumerable<QueuedSample> GetAllEnqueued()
+        {
+            lock (_playList)
+            {
+                return _playList.ToList();
+            }
+        }
+
         public async Task EnqueueSampleAsync(QueuedSample sample)
         {
             using (var db = GetDatabase())

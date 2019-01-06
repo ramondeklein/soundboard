@@ -28,10 +28,28 @@ export class PlayerComponent implements OnInit, OnDestroy {
     this.subscriptionContainer.unSubscribeAll();
   }
 
-  public getActiveSampleTitle() {
+  public isPlaying() {
+    return this.activeSamplePlayInfo;
+  }
+
+  public getCategoryTitle() {
     if (this.activeSamplePlayInfo) {
       const sample = this.activeSamplePlayInfo.getSample();
-      return `${sample.getCategory().getTitle()}${sample.getTitle()}`;
+      let title = sample.getCategory().getTitle();
+      if (title.startsWith('/')) {
+        title = title.substring(1);
+      }
+      if (title.endsWith('/')) {
+        title = title.substring(0, title.length - 1);
+      }
+      return title;
+    }
+  }
+
+  public getSampleTitle() {
+    if (this.activeSamplePlayInfo) {
+      const sample = this.activeSamplePlayInfo.getSample();
+      return sample.getTitle();
     }
   }
 }

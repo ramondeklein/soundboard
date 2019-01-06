@@ -20,6 +20,9 @@ export class PlayListService implements OnDestroy {
       this.api.onPlayListSamplePopped.subscribe((queuedSample) => this.onItemPoppedFromPlayList(queuedSample)),
       this.api.onPlayListCleared.subscribe(() => this.onClearPlayList())
     );
+    this.api.playListGetAll().subscribe((queuedSamples: Readonly<IQueuedSample>[]) =>
+      queuedSamples.map((s) => this.onItemAddedToPlayList(s))
+    );
   }
 
   ngOnDestroy() {

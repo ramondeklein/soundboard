@@ -1,11 +1,189 @@
 @import "./assets/css/colors";
-@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+$header-height: 75px;
+$sidebar-width: 400px;
+
 
 body {
     font-family: Roboto, 'Open Sans', Arial, sans-serif;
     margin: 0;
+    background-color: $background-color;
 }
 
 * {
     box-sizing: border-box;
+}
+
+app-header {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: $header-height;
+    background-color: $light-background-color;
+    color: $text-color;
+    border-bottom: 1px solid $text-color;
+
+    app-logo {
+        margin: 10px;
+        float: left;
+        fill: $text-color;
+
+    }
+
+    app-player {
+        float: right;
+        height: 100%;
+        width: $sidebar-width;
+        border-left: 1px solid $text-color;
+    }
+}
+
+app-sidebar {
+    display: block;
+    position: fixed;
+    right: 0;
+    top: $header-height;
+    bottom: 0;
+    width: $sidebar-width;
+    background-color: $light-background-color;
+    color: $text-color;
+    border-left: 1px solid $text-color;
+
+    li {
+        padding: 0 5px;
+    }
+
+    h1 {
+        background-color: $background-color;
+        margin: 0;
+        padding: 5px;        
+        font-size: 100%;
+
+        button {
+            float: right;
+            color: $text-color;
+            border: 0;
+            background: none;
+            box-shadow: none;
+            border-radius: 0px;        
+        }
+    }
+
+    ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+app-categories {
+    display: block;
+    margin-top: $header-height;
+    margin-right: $sidebar-width;
+
+    h1 {
+        color: $text-color;
+        margin: 0;
+        padding: 5px;        
+        font-size: 120%;
+    }
+
+    app-sample {
+        button {
+            display: flex;
+            flex-direction: column;
+            width: 160px;
+            height: 120px;
+            border: none;
+            justify-content: space-between;
+            align-items: stretch;
+            text-align: center;
+            padding: 0;
+            color: $text-color;
+            background-color: $light-background-color;
+        }
+
+        h2 {
+            flex-grow: 0;
+            overflow: hidden;
+            margin: 0;
+            padding: 8px;
+            font-size: 12px;
+        }
+        
+        div {
+            flex-grow: 0;
+            padding: 4px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            font-size: 12px;
+        }
+    }
+}
+
+.nowrap {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: block;
+    overflow: hidden
+}
+
+@media only screen and (max-width: $mobile-width) {
+    app-logo {
+        display: none;
+    }
+
+    app-header {
+        app-player {
+            float: none;
+            height: 100%;
+            width: 100%;
+            border: 0;
+        }
+    }
+
+    app-sidebar {
+        display: block;
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: auto;
+        bottom: 0;
+        width: 100%;
+        height: auto;
+        border-top: 1px solid $text-color;
+        border-left: 0;
+
+        app-history {
+            display: none;
+        }
+
+        app-playlist {
+            ul {
+                max-height: 70px;
+            }
+        }
+    }
+
+    app-categories {
+        width: 100%;
+
+        app-sample {
+            button {
+                display: block;
+                width: 100%;
+                height: 50px;
+                text-align: left;
+            }
+
+            h2 {
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                display: block;
+                overflow: hidden
+            }
+        }
+    }
 }

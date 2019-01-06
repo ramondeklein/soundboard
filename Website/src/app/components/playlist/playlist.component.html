@@ -1,8 +1,10 @@
 <div>
-  <button (click)="onClear()">Clear</button>
+  <h1>Playlist ({{getSamples().length}})
+      <button (click)="onClear()">clear</button>
+  </h1>
   <ul>
     <li *ngFor="let sample of getSamples()">
-      <div>{{sample.getCategory().getTitle()}}{{sample.getTitle()}}</div>
+      <div class="nowrap" >{{sample.getCategory().getTitle()}}{{sample.getTitle()}}</div>
     </li>
   </ul>
 </div>

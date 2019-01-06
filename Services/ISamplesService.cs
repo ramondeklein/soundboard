@@ -8,8 +8,10 @@ namespace Soundboard.Server.Services
     {
         Task ScanAsync();
         IEnumerable<Sample> GetSamples();
+        IEnumerable<QueuedSample> GetAllEnqueued();
         Task EnqueueSampleAsync(QueuedSample sample);
         Task<QueuedSample> PopSampleAsync();
+        
         Task ClearPlayListAsync();
         string GetSampleFile(string id);
         Task MarkSampleAsPlayedAsync(string id);

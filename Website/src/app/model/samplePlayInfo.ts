@@ -7,6 +7,7 @@ export class SamplePlayInfo {
         this.playCount = sample.getPlayCount();
     }
 
+    public getCategoryTitle = () => this.sample.getCategory().getTitle();
     public getTitle = () => this.sample.getTitle();
     public getPlayCount = () => this.playCount;
     public getTimestamp = () => this.timestamp;

@@ -57,6 +57,9 @@ export class ApiService {
   }
 
   // Playlist API
+  playListGetAll = () =>
+    this.http.get(`${ApiService.baseUrl}playList/getAll`)
+
   playListEnqueueSample = (queuedSample: IQueuedSample) =>
     this.http.post(`${ApiService.baseUrl}playList/enqueue`, queuedSample)
 

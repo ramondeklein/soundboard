@@ -14,6 +14,9 @@ import { CategoriesComponent } from './components/categories/categories.componen
 import { RegistrationComponent } from './components/registration/registration.component';
 import { PlaylistComponent } from './components/playlist/playlist.component';
 import { PlayerComponent } from './components/player/player.component';
+import { HeaderComponent } from './components/header/header.component';
+import { SideBarComponent } from './components/sidebar/sidebar.component';
+import { LogoComponent } from './components/logo/logo.component';
 
 
 @NgModule({
@@ -22,6 +25,9 @@ import { PlayerComponent } from './components/player/player.component';
     CategoryComponent,
     SampleComponent,
     HistoryComponent,
+    LogoComponent,
+    HeaderComponent,
+    SideBarComponent,
     CategoriesComponent,
     RegistrationComponent,
     PlaylistComponent,

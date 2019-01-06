@@ -1,3 +1,5 @@
-<div>
-  <div>Now playing: {{getActiveSampleTitle()}}</div>
+<div *ngIf="isPlaying()">
+    <div class="header">now playing</div>
+    <div class="category nowrap">{{getCategoryTitle()}}</div>
+    <div class="title nowrap">{{getSampleTitle()}}</div>
 </div>

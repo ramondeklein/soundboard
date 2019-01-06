@@ -23,6 +23,13 @@ namespace Soundboard.Server.Controllers
             _samplesService = samplesService;
         }
 
+        [HttpGet]
+        public ActionResult<IEnumerable<QueuedSample>> GetAll()
+        {
+            var queuedSamples = _samplesService.GetAllEnqueued();
+            return Ok(queuedSamples);
+        }
+
         [HttpPost]
         public async Task<ActionResult> Enqueue(QueuedSample queuedSample)
         {
