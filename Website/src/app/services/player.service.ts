@@ -28,6 +28,8 @@ export class PlayerService implements OnDestroy {
     this.subscriptionContainer = new SubscriptionContainer(
       this.registration.onActiveRegistrationChanged.subscribe((r) => this.onActiveRegistrationChanged(r)),
       this.api.onPlayListSampleEnqueued.subscribe(() => this.playNextSample()),
+      this.api.onPlayingStarted.subscribe((queuedSample) => this.onSampleStarted.next(this.getSamplePlayInfo(queuedSample))),
+      this.api.onPlayingFinished.subscribe((queuedSample) => this.onSampleFinished.next(this.getSamplePlayInfo(queuedSample)))
     );
 
     this.onActiveRegistrationChanged(this.registration.getActiveRegistration());
@@ -39,28 +41,30 @@ export class PlayerService implements OnDestroy {
 
   public getIsPlaying = () => this.isPlaying;
 
-  private playSample(sample: Sample) {
+  private getSamplePlayInfo(queuedSample: Readonly<IQueuedSample>) {
+    const sample = this.catalog.getSampleByQueuedSample(queuedSample);
     const playInfo = new SamplePlayInfo(sample);
+    return playInfo;
+  }
+
+  private playSample(queuedSample: IQueuedSample) {
     const sound = new Howl({
-      src: [this.api.sampleGetStreamUrl(sample.getId())],
+      src: [this.api.sampleGetStreamUrl(queuedSample.sampleId)],
       format: 'mp3',
-      onload: () => {
-        this.onSampleStarted.next(playInfo);
-      },
-      onloaderror: (soundId, err) => {
-        console.error(`Cannot load sample '${sample.getCategory().getTitle()}${sample.getTitle()}': ${err.message}`);
+      onload: () => this.api.playingStarted(queuedSample).subscribe(),
+      onloaderror: (_, err) => {
+        console.error(`Cannot load sample '${queuedSample.sampleId}': ${err.message}`);
         this.isPlaying = false;
         this.playNextSample();
       },
-      onplayerror: (soundId, err) => {
-        console.error(`Cannot play sample '${sample.getCategory().getTitle()}${sample.getTitle()}': ${err.message}`);
+      onplayerror: (_, err) => {
+        console.error(`Cannot play sample '${queuedSample.sampleId}': ${err.message}`);
         this.isPlaying = false;
         this.playNextSample();
       },
       onend: () => {
         this.isPlaying = false;
-        this.onSampleFinished.next(playInfo);
-        this.api.sampleMarkPlayed(sample.getId()).subscribe(() => this.playNextSample());
+        this.api.playingFinished(queuedSample).subscribe(() => this.playNextSample());
       }
     });
     sound.play();
@@ -78,7 +82,7 @@ export class PlayerService implements OnDestroy {
               this.isPlaying = false;
               return;
             }
-            this.playSample(sample);
+            this.playSample(queuedSample);
           } else {
             this.isPlaying = false;
           }

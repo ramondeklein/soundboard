@@ -21,32 +21,11 @@ body {
     }
 }
 
+
 .header {
-    position: fixed;
-    left: 0;
-    right: 0;
-    top: 0;
-    height: $header-height;
-    background-color: $light-background-color;
-    border-bottom: 1px solid $text-color;
-
     app-logo {
-        float: left;
+        display: block;
         fill: $text-color;
-        padding: 10px;
-    }
-
-    app-player {
-        display: block;
-        float: right;
-        height: 100%;
-        width: $sidebar-width;
-        border-left: 1px solid $text-color;
-    }
-
-    app-filter {
-        display: block;
-        padding: 10px;
     }
 }
 
@@ -73,7 +52,6 @@ body {
 
 app-categories {
     display: block;
-    margin-top: $header-height;
     margin-right: $sidebar-width;
 
     ul {
@@ -146,18 +124,25 @@ button.flat {
     border-radius: 0px;        
 }
 
-input {
+input, select {
     border: 1px solid $dark-text-color;
     background-color: $background-color;
     border-radius: 10px;
     color: $text-color;
-    padding: 3px 10px;
+    width: 250px;
 
     &:focus {
         border-color: $text-color;
     }
 }
 
+input {
+    padding: 3px 10px;
+}
+
+select {
+    padding: 3px 7px;
+}
 
 .nowrap {
     white-space: nowrap;
@@ -166,41 +151,109 @@ input {
     overflow: hidden
 }
 
-@media only screen and (max-width: $mobile-width) {
-    app-logo {
-        position: absolute;
+@media only screen and (min-width: $mobile-width) {
+
+    .header {
+        position: sticky;
         left: 0;
         right: 0;
         top: 0;
-        height: $mobile-header-height;
-        display: block;
-        background: $background-color;
+        height: $header-height;
+        background-color: $light-background-color;
+        border-bottom: 1px solid $text-color;
+        display: grid;
+        grid-template-columns: auto 1fr $sidebar-width;
+        grid-template-rows: auto auto;
+        
+        app-logo {
+            grid-column-start: 1;
+            grid-column-end: 2;
+            grid-row-start: 1;
+            grid-row-end: 3;
+            padding: 10px;
 
-        svg {
-            height: auto;
-        }
-    }
-
-    .header {
-        app-player {
-            display: block;
-            position: absolute;
-            float: none;
-            top: 0;
-            width: 100%;
-            height: auto;
-            background-color: $background-color;
-            z-index: 100;
-
-            .container {
-                height: $mobile-header-height;
+            svg {
+                // TODO: Make sure this auto-aligns properly
+                height: 54px;
             }
         }
+    
+        app-player {
+            grid-column-start: 3;
+            grid-column-end: 4;
+            grid-row-start: 1;
+            grid-row-end: 3;
+            padding: 10px;
+            display: block;
+            height: 100%;
+            width: $sidebar-width;
+            border-left: 1px solid $text-color;
+        }
 
+        app-registration, app-filter {
+            display: block;
+            justify-self: end;
+            grid-column-start: 2;
+        }
+    
+        app-registration {
+            grid-row-start: 1;
+            .active, .description {
+                display: inline-block;
+            }
+        }
+    
         app-filter {
-            margin-top: $header-height;
-            background-color: $background-color;
-            height: $mobile-filter-height;
+            grid-row-start: 2;
+        }
+    }
+}
+
+@media only screen and (max-width: $mobile-width) {
+    .header {
+        position: sticky;
+        left: 0;
+        right: 0;
+        top: 0;
+        background: $background-color;
+        border-bottom: 1px solid $text-color;
+        display: grid;
+        grid-template-rows: auto auto auto;
+        grid-template-columns: 1fr;
+
+        app-logo {
+            grid-row-start: 1;
+            grid-column-start: 1;
+            justify-self: center;
+            height: $mobile-header-height;
+            padding: 10px;
+
+            svg {
+                // TODO: Make sure this auto-aligns properly
+                height: 35px;
+            }
+        }
+    
+        app-player {
+            .container {
+                background: $background-color;
+            }
+            grid-row-start: 1;
+            grid-column-start: 1;
+            z-index: 100;
+        }
+
+        app-registration, app-filter {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+    
+        app-registration {
+            grid-row-start: 2;
+        }
+    
+        app-filter {
+            grid-row-start: 3;
             border-bottom: 1px solid $text-color;
         }
     }
@@ -230,7 +283,6 @@ input {
 
     app-categories {
         width: 100%;
-        margin-top: $mobile-header-height + $mobile-filter-height;
 
         app-sample {           
             button {
@@ -247,5 +299,9 @@ input {
                 color: $dark-text-color;
             }
         }
+    }
+   
+    input, select {
+        width: 100%;
     }
 }

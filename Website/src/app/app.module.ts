@@ -2,7 +2,6 @@ import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
-import { MatIconModule, MatButtonModule, MatOptionModule, MatSelectModule } from '@angular/material';
 import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -16,7 +15,6 @@ import { PlaylistComponent } from './components/playlist/playlist.component';
 import { PlayerComponent } from './components/player/player.component';
 import { FilterComponent } from './components/filter/filter.component';
 import { LogoComponent } from './components/logo/logo.component';
-
 
 @NgModule({
   declarations: [
@@ -37,10 +35,6 @@ import { LogoComponent } from './components/logo/logo.component';
     FormsModule,
     HttpClientModule,
     AppRoutingModule,
-    MatOptionModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatIconModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

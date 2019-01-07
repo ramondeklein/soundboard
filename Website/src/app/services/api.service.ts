@@ -27,6 +27,8 @@ export class ApiService {
   public readonly onPlayListSampleEnqueued = new Subject<Readonly<IQueuedSample>>();
   public readonly onPlayListSamplePopped = new Subject<Readonly<IQueuedSample>>();
   public readonly onPlayListCleared = new Subject();
+  public readonly onPlayingStarted = new Subject<Readonly<IQueuedSample>>();
+  public readonly onPlayingFinished = new Subject<Readonly<IQueuedSample>>();
   public readonly onRegistrationRegistered = new Subject<Readonly<IRegistration>>();
   public readonly onRegistrationUnregistered = new Subject<Readonly<IRegistration>>();
   public readonly onRegistrationActiveChanged = new Subject<Readonly<IRegistration>>();
@@ -46,6 +48,8 @@ export class ApiService {
     this.onEvent('sampleEnqueued', (queuedSample: IQueuedSample) => this.onPlayListSampleEnqueued.next(queuedSample));
     this.onEvent('samplePopped', (queuedSample: IQueuedSample) => this.onPlayListSamplePopped.next(queuedSample));
     this.onEvent('playListCleared', () => this.onPlayListCleared.next());
+    this.onEvent('playingStarted', (queuedSample: IQueuedSample) => this.onPlayingStarted.next(queuedSample));
+    this.onEvent('playingFinished', (queuedSample: IQueuedSample) => this.onPlayingFinished.next(queuedSample));
     this.onEvent('registrationRegistered', (registration: IRegistration) => this.onRegistrationRegistered.next(registration));
     this.onEvent('registrationUnregistered', (registration: IRegistration) => this.onRegistrationUnregistered.next(registration));
     this.onEvent('registrationActiveChanged', (registration: IRegistration) => this.onRegistrationActiveChanged.next(registration));
@@ -74,8 +78,11 @@ export class ApiService {
   sampleGetStreamUrl = (id: string) =>
     `${ApiService.baseUrl}samples/getStream?id=${encodeURIComponent(id)}`
 
-  sampleMarkPlayed = (id: string) =>
-    this.http.post(`${ApiService.baseUrl}samples/markAsPlayed`, { id })
+  playingStarted = (queuedSample: IQueuedSample) =>
+    this.http.post(`${ApiService.baseUrl}playlist/playStarted`, queuedSample)
+
+  playingFinished = (queuedSample: IQueuedSample) =>
+    this.http.post(`${ApiService.baseUrl}playlist/playFinished`, queuedSample)
 
   // Registration API
   registrationRegister = (player: IRegistration) =>

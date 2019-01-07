@@ -20,6 +20,9 @@ namespace Soundboard.Server.Services
         private const string HubSamplePoppedEvent = "samplePopped";
         private const string HubSampleUpdated = "sampleUpdated";
         private const string HubPlayListCleared = "playListCleared";
+        private const string HubPlayingStarted = "playingStarted";
+        private const string HubPlayingFinished = "playingFinished";
+
         private const string HubScan = "scan";
 
 
@@ -169,6 +172,17 @@ namespace Soundboard.Server.Services
             await _hubContext.Clients.All.SendAsync(HubSamplePoppedEvent, poppedSample);
             return poppedSample;
         }
+
+        public async Task PlayingStarted(QueuedSample queuedSample)
+        {
+            await _hubContext.Clients.All.SendAsync(HubPlayingStarted, queuedSample);
+        }
+
+        public async Task PlayingFinished(QueuedSample queuedSample)
+        {
+            await _hubContext.Clients.All.SendAsync(HubPlayingFinished, queuedSample);
+        }
+
 
         public async Task ClearPlayListAsync()
         {

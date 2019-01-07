@@ -65,10 +65,11 @@ namespace Soundboard.Server.Services
         {
             var setActive = false;
 
+            Registration existingRegistration;
             lock (_registrations)
             {
                 var utcNow = DateTime.UtcNow;
-                var existingRegistration = _registrations.FirstOrDefault(p => p.Id == registration.Id);
+                existingRegistration = _registrations.FirstOrDefault(p => p.Id == registration.Id);
                 if (existingRegistration == null)
                 {
                     _registrations.Add(existingRegistration = new Registration
@@ -89,9 +90,9 @@ namespace Soundboard.Server.Services
                 setActive = _activeRegistration == null;
             }
 
-            await _hubContext.Clients.All.SendAsync(HubRegisterEvent, registration);
+            await _hubContext.Clients.All.SendAsync(HubRegisterEvent, existingRegistration);
             if (setActive)
-                await SetActiveAsync(registration.Id);
+                await SetActiveAsync(existingRegistration.Id);
         }
 
         public async Task UnregisterAsync(string id)

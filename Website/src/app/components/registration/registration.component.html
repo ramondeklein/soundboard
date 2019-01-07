@@ -1,13 +1,11 @@
+<!-- <div *ngIf="showActivePlayer()"> -->
 <div>
-    <!-- <form #form="ngForm" novalidate>
-        <mat-form-field>
-            <mat-select [(value)]="activeRegistrationId">
-                <mat-option *ngFor="let registration of getRegistrations()" value="{{registration.id}}">{{registration.description}}</mat-option>
-            </mat-select>
-        </mat-form-field>
-    
-        <label>description:</label>
-        <input type="text" name="description" [(ngModel)]="description" minlength="2" maxlength="35" #descriptionDir="ngModel">
-        <button type="button" [disabled]="form.invalid" (click)="onFormSubmit()">submit</button>
-    </form> -->
+    <div class="active">
+        <select [(value)]="activeRegistrationId" (change)="onChangeActiveRegistration($event)" accesskey="p">
+            <option *ngFor="let registration of getRegistrations()" value="{{registration.id}}">{{registration.description}}</option>
+        </select>
+    </div>
+    <div class="description">
+        <input type="text" [(value)]="description" (blur)="onSetDescription($event)" (keyup.enter)="onSetDescription($event)" accesskey="d">
+    </div>
 </div>

@@ -11,6 +11,8 @@ namespace Soundboard.Server.Services
         IEnumerable<QueuedSample> GetAllEnqueued();
         Task EnqueueSampleAsync(QueuedSample sample);
         Task<QueuedSample> PopSampleAsync();
+        Task PlayingStarted(QueuedSample queuedSample);
+        Task PlayingFinished(QueuedSample queuedSample);
         
         Task ClearPlayListAsync();
         string GetSampleFile(string id);

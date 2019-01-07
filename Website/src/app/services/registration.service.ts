@@ -1,14 +1,16 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, Observable, pipe } from 'rxjs';
 
 import { ApiService, IRegistration } from './api.service';
 import { SubscriptionContainer } from '../utils/subscriptionContainer';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RegistrationService implements OnDestroy {
   public readonly onActiveRegistrationChanged = new Subject<Readonly<IRegistration>>();
+  public readonly onDescriptionChanged = new Subject<string>();
 
   private readonly id: string;
   private readonly subscriptionContainer: SubscriptionContainer;
@@ -44,7 +46,7 @@ export class RegistrationService implements OnDestroy {
     );
 
     if (this.description) {
-      this.register();
+      this.register().subscribe();
     }
   }
 
@@ -52,7 +54,7 @@ export class RegistrationService implements OnDestroy {
     this.subscriptionContainer.unSubscribeAll();
     if (this.description) {
       this.description = undefined;
-      this.register();
+      this.register().subscribe();
     }
   }
 
@@ -64,7 +66,7 @@ export class RegistrationService implements OnDestroy {
       localStorage.removeItem('description');
     }
 
-    this.register();
+    return this.register();
   }
 
   public getRegistrationId = () => this.id;
@@ -76,20 +78,20 @@ export class RegistrationService implements OnDestroy {
     return this.api.registrationSetActive(activeRegistration != null ? activeRegistration.id : undefined);
   }
 
-  private register() {
+  private register(): Observable<void> {
     if (this.registrationTimer) {
       clearTimeout(this.registrationTimer);
     }
 
     if (this.description) {
-      this.api.registrationRegister({
+      return this.api.registrationRegister({
         id: this.id,
         description: this.description
-      }).subscribe(() => {
-        this.registrationTimer = setTimeout(() => this.register(), 60000);
-      });
+      }).pipe(map((_) => {
+        this.registrationTimer = setTimeout(() => this.register().subscribe(), 60000);
+      }));
     } else {
-      this.api.registrationUnregister(this.id).subscribe();
+      return this.api.registrationUnregister(this.id).pipe(map((_) => {}));
     }
   }
 
@@ -99,6 +101,10 @@ export class RegistrationService implements OnDestroy {
       this.registrations[index] = registration;
     } else {
       this.registrations.push(registration);
+    }
+    if (registration.id === this.id) {
+      this.description = registration.description;
+      this.onDescriptionChanged.next(this.description);
     }
   }
 

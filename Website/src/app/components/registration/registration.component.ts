@@ -11,8 +11,8 @@ import { SubscriptionContainer } from '../../utils/subscriptionContainer';
 })
 export class RegistrationComponent implements OnInit, OnDestroy {
   private readonly subscriptionContainer: SubscriptionContainer;
-  public activeRegistrationId: string;
   public description: string;
+  public activeRegistrationId: string;
 
   constructor(private readonly registrationService: RegistrationService) {
     this.subscriptionContainer = new SubscriptionContainer();
@@ -22,7 +22,8 @@ export class RegistrationComponent implements OnInit, OnDestroy {
     this.description = this.registrationService.getDescription();
     this.updateActiveRegistration(this.registrationService.getActiveRegistration());
     this.subscriptionContainer.addSubscription(
-      this.registrationService.onActiveRegistrationChanged.subscribe((activeRegistration) => this.updateActiveRegistration(activeRegistration))
+      this.registrationService.onActiveRegistrationChanged.subscribe((activeRegistration) => this.updateActiveRegistration(activeRegistration)),
+      this.registrationService.onDescriptionChanged.subscribe((description) => this.description = description)
     );
   }
 
@@ -34,12 +35,32 @@ export class RegistrationComponent implements OnInit, OnDestroy {
     this.activeRegistrationId = activeRegistration ? activeRegistration.id : undefined;
   }
 
-  onFormSubmit() {
-    const activeRegistration = this.getRegistrations().find((r) => r.id === this.activeRegistrationId);
-    this.registrationService.setActiveRegistration(activeRegistration);
-    this.registrationService.setDescription(this.description);
+  getRegistrations = () => this.registrationService.getRegistrations();
+
+  showActivePlayer() {
+    // Show registrations if other players have been registered
+    const otherRegistration = this.getRegistrations().find((r) => r.id !== this.activeRegistrationId);
+    if (otherRegistration) {
+      return true;
+    }
+
+    return false;
   }
 
-  getRegistrations = () => this.registrationService.getRegistrations();
-  getActiveRegistration = () => this.registrationService.getActiveRegistration();
+  onChangeActiveRegistration(event: Event) {
+    const target = event.target as HTMLSelectElement;
+    const activeRegistration = this.getRegistrations().find((r) => r.id === target.value);
+    if (activeRegistration) {
+      this.registrationService.setActiveRegistration(activeRegistration).subscribe();
+    }
+  }
+
+  onSetDescription(event: Event) {
+    const newDescription = (event.target as HTMLInputElement).value;
+    if (this.description !== newDescription) {
+      this.registrationService.setDescription(newDescription).subscribe(() => {
+        this.description = newDescription;
+      });
+    }
+  }
 }

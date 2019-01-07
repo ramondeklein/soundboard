@@ -54,6 +54,21 @@ namespace Soundboard.Server.Controllers
             return Ok(poppedSample);
         }
 
+        [HttpPost]
+        public async Task<ActionResult> PlayStarted(QueuedSample queuedSample)
+        {
+            await _samplesService.PlayingStarted(queuedSample);
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> PlayFinished(QueuedSample queuedSample)
+        {
+            await _samplesService.MarkSampleAsPlayedAsync(queuedSample.SampleId);
+            await _samplesService.PlayingFinished(queuedSample);
+            return Ok();
+        }
+
         [HttpDelete]
         public async Task<ActionResult> Clear()
         {

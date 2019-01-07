@@ -49,21 +49,5 @@ namespace Soundboard.Server.Controllers
         {
             await _samplesService.ScanAsync();
         }
-
-        public class IdClass { public string Id; }
-
-        [HttpPost]
-        public async Task<ActionResult> MarkAsPlayed(IdClass id)
-        {
-            try
-            {
-                await _samplesService.MarkSampleAsPlayedAsync(id.Id);
-                return Ok();
-            }
-            catch (SampleNotFoundException)
-            {
-                return NotFound();
-            }
-        }
     }
 }

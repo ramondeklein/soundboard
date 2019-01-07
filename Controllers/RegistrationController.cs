@@ -48,9 +48,9 @@ namespace Soundboard.Server.Controllers
         }
 
         [HttpPut]
-        public async Task SetActive(string id)
+        public async Task SetActive(IdClass id)
         {
-            await _registration.SetActiveAsync(id);
+            await _registration.SetActiveAsync(id.Id);
         }
     }
 }
