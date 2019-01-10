@@ -42,8 +42,9 @@ export class RegistrationService implements OnDestroy {
 
     this.initialized = (async () => {
       this.registrations = await this.api.registrationGetAll();
+      this.registrations.map((r) => this.onRegister(r));
       this.onSetActive(await this.api.registrationGetActive());
-  
+
       if (this.description) {
         await this.register();
       }

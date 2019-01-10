@@ -1,0 +1,24 @@
+<!-- <div *ngIf="showActivePlayer()"> -->
+<div class="buttons">
+    <button class="flat" (click)="onToggleSettings()">settings</button>
+    <button class="flat" (click)="onScan()">scan</button>
+    <button class="flat" (click)="onRefresh()">refresh</button>
+</div>
+<div class="container">
+    <div *ngIf="isSettingsVisible" class="row active">
+        <label class="column">active player</label>
+        <select class="column" [(value)]="activeRegistrationId" (change)="onChangeActiveRegistration($event)"
+            accesskey="p">
+            <option *ngFor="let registration of registrations" value="{{registration.id}}">{{registration.description}}</option>
+        </select>
+    </div>
+    <div *ngIf="isSettingsVisible" class="row description">
+        <label class="column">your name</label>
+        <input class="column" type="text" [(value)]="description" (blur)="onSetDescription($event)" (keyup.enter)="onSetDescription($event)"
+            accesskey="d">
+    </div>
+    <div class="row filter">
+        <label class="column">filter</label>
+        <input class="column" type="text" (keyup)="onKey($event)" accesskey="s">
+    </div>
+</div>

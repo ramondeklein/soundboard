@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { FilterComponent } from './components/filter/filter.component';
+import { ToolBoxComponent } from './components/toolbox/toolbox.component';
 
 @Component({
   selector: 'app-root',
@@ -7,7 +7,7 @@ import { FilterComponent } from './components/filter/filter.component';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  @ViewChild('filterComponent') filterComponent: FilterComponent;
+  @ViewChild('toolBoxComponent') toolBoxComponent: ToolBoxComponent;
   public filter: string;
 
   onFilterChanged(newFilter: string) {
@@ -15,6 +15,6 @@ export class AppComponent {
   }
 
   onKey(event: KeyboardEvent) {
-    this.filterComponent.setFocus(event.key);
+    this.toolBoxComponent.setFocus(event.key);
   }
 }

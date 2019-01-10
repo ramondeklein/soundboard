@@ -10,10 +10,9 @@ import { CategoryComponent } from './components/category/category.component';
 import { SampleComponent } from './components/sample/sample.component';
 import { HistoryComponent } from './components/history/history.component';
 import { CategoriesComponent } from './components/categories/categories.component';
-import { RegistrationComponent } from './components/registration/registration.component';
+import { ToolBoxComponent } from './components/toolbox/toolbox.component';
 import { PlaylistComponent } from './components/playlist/playlist.component';
 import { PlayerComponent } from './components/player/player.component';
-import { FilterComponent } from './components/filter/filter.component';
 import { LogoComponent } from './components/logo/logo.component';
 
 @NgModule({
@@ -23,9 +22,8 @@ import { LogoComponent } from './components/logo/logo.component';
     SampleComponent,
     HistoryComponent,
     LogoComponent,
-    FilterComponent,
+    ToolBoxComponent,
     CategoriesComponent,
-    RegistrationComponent,
     PlaylistComponent,
     PlayerComponent,
   ],

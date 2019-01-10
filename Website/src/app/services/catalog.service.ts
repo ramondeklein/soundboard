@@ -87,7 +87,7 @@ export class CatalogService implements OnDestroy {
     }
     categories.sort((c1, c2) => compareNames(c1.getTitle(), c2.getTitle()));
     this.categories = categories;
-    this.refreshed.next();
+    this.refreshed.next(categories);
     return categories;
   }
 
