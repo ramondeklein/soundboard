@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { HubConnectionBuilder, HubConnection } from '@aspnet/signalr';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { IBackEndSample } from '../model/IBackEndSample';
+import { catchError } from 'rxjs/operators';
 
 export interface IQueuedSample {
   sampleId: string;
@@ -14,6 +15,7 @@ export interface IRegistration {
   id: string;
   description: string;
 }
+
 
 @Injectable({
   providedIn: 'root'
@@ -57,48 +59,54 @@ export class ApiService {
 
   // Playlist API
   playListGetAll = () =>
-    this.http.get(`${ApiService.baseUrl}playList/getAll`)
+    this.convertToPromise<IBackEndSample[]>(this.http.get(`${ApiService.baseUrl}playList/getAll`))
 
   playListEnqueueSample = (queuedSample: IQueuedSample) =>
-    this.http.post(`${ApiService.baseUrl}playList/enqueue`, queuedSample)
+    this.convertToPromise(this.http.post(`${ApiService.baseUrl}playList/enqueue`, queuedSample))
 
   playListPopSample = () =>
-    this.http.post<IQueuedSample>(`${ApiService.baseUrl}playList/pop`, {})
+    this.convertToPromise<IQueuedSample>(this.http.post(`${ApiService.baseUrl}playList/pop`, {}))
 
   playListClear = () =>
-    this.http.delete(`${ApiService.baseUrl}playlist/clear`)
+    this.convertToPromise(this.http.delete(`${ApiService.baseUrl}playlist/clear`))
 
   // Sample API
   sampleScan = () =>
-    this.http.post(`${ApiService.baseUrl}samples/scan`, {})
+    this.convertToPromise(this.http.post(`${ApiService.baseUrl}samples/scan`, {}))
 
   sampleGetAll = () =>
-    this.http.get<IBackEndSample[]>(`${ApiService.baseUrl}samples/getAll`)
+    this.convertToPromise<IBackEndSample[]>(this.http.get(`${ApiService.baseUrl}samples/getAll`))
 
   sampleGetStreamUrl = (id: string) =>
     `${ApiService.baseUrl}samples/getStream?id=${encodeURIComponent(id)}`
 
   playingStarted = (queuedSample: IQueuedSample) =>
-    this.http.post(`${ApiService.baseUrl}playlist/playStarted`, queuedSample)
+    this.convertToPromise(this.http.post(`${ApiService.baseUrl}playlist/playStarted`, queuedSample))
 
   playingFinished = (queuedSample: IQueuedSample) =>
-    this.http.post(`${ApiService.baseUrl}playlist/playFinished`, queuedSample)
+    this.convertToPromise(this.http.post(`${ApiService.baseUrl}playlist/playFinished`, queuedSample))
 
   // Registration API
   registrationRegister = (player: IRegistration) =>
-    this.http.put(`${ApiService.baseUrl}registration/register`, player)
+    this.convertToPromise(this.http.put(`${ApiService.baseUrl}registration/register`, player))
 
   registrationUnregister = (id: string) =>
-    this.http.delete(`${ApiService.baseUrl}registration/unregister?id=${encodeURIComponent(id)}`)
+    this.convertToPromise(this.http.delete(`${ApiService.baseUrl}registration/unregister?id=${encodeURIComponent(id)}`))
 
   registrationGetAll = () =>
-    this.http.get<IRegistration[]>(`${ApiService.baseUrl}registration/getAll`)
+    this.convertToPromise<IRegistration[]>(this.http.get(`${ApiService.baseUrl}registration/getAll`))
 
   registrationGetActive = () =>
-    this.http.get<IRegistration>(`${ApiService.baseUrl}registration/getActive`)
+    this.convertToPromise<IRegistration>(this.http.get(`${ApiService.baseUrl}registration/getActive`))
 
   registrationSetActive = (id: string) =>
-    this.http.put(`${ApiService.baseUrl}registration/setActive`, { id })
+    this.convertToPromise(this.http.put(`${ApiService.baseUrl}registration/setActive`, { id }))
+
+  private convertToPromise<T = void>(observable: Observable<any>): Promise<T> {
+      return new Promise((resolve, reject) => {
+        observable.subscribe((result: T) => resolve(result), (error) => reject(error));
+      });
+    }
 
   private onEvent(methodName: string, method: (...args: any[]) => void) {
     this.connection.on(methodName, this.enableLogging ? ((...args: any[]) => {

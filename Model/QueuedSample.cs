@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace Soundboard.Server.Model
 {
     public class QueuedSample

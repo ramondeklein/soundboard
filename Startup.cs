@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Soundboard.Server.Hubs;
 using Soundboard.Server.Services;
 
@@ -21,6 +16,7 @@ namespace Soundboard.Server
     public class Startup
     {
         private const string CorsPolicy = "CorsPolicy";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -61,18 +57,15 @@ namespace Soundboard.Server
                 app.UseHsts();
             }
 
+            var soundBoardDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Website/dist/soundboard");
+            Directory.CreateDirectory(soundBoardDirectory);
+
             //app.UseHttpsRedirection();
             app.UseCookiePolicy();
             app.UseCors(CorsPolicy);
             app.UseDefaultFiles();
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Website/dist/soundboard"))
-            });
-            app.UseSignalR(routes =>
-            {
-                routes.MapHub<SoundboardHub>("/api/hub");
-            });
+            app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(soundBoardDirectory) });
+            app.UseSignalR(routes => routes.MapHub<SoundboardHub>("/api/hub"));
             app.UseMvc();
 
         }

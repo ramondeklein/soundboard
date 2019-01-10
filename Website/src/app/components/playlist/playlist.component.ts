@@ -15,7 +15,7 @@ export class PlaylistComponent {
     return this.playListService.getPlayList();
   }
 
-  public onClear() {
-    return this.playListService.clearPlayList().subscribe();
+  public async onClear() {
+    await this.playListService.clearPlayList();
   }
 }

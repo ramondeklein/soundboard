@@ -26,8 +26,8 @@ export class FilterComponent {
     }
   }
 
-  public onScan() {
-    this.catalogService.scan().subscribe();
+  public async onScan() {
+    await this.catalogService.scan();
   }
 
   public onRefresh() {

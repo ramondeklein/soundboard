@@ -19,7 +19,7 @@ export class SampleComponent {
     return formatDate(date);
   }
 
-  onPlay(): void {
-    this.playListService.enqueueSample(this.sample).subscribe();
+  async onPlay() {
+    await this.playListService.enqueueSample(this.sample);
   }
 }

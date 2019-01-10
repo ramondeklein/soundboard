@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 
-using LiteDB;
 using Microsoft.AspNetCore.SignalR;
 using Soundboard.Server.Hubs;
 using Soundboard.Server.Model;
@@ -64,6 +61,7 @@ namespace Soundboard.Server.Services
         public async Task RegisterAsync(Registration registration)
         {
             var setActive = false;
+            var sendRegistration = false;
 
             Registration existingRegistration;
             lock (_registrations)
@@ -78,19 +76,24 @@ namespace Soundboard.Server.Services
                         Description = registration.Description,
                         FirstRegistrationUtc = utcNow
                     });
+                    sendRegistration = true;
                 }
                 else
                 {
-                    if (existingRegistration.Description == registration.Description)
-                        return;
-                    existingRegistration.Description = registration.Description;
+                    if (existingRegistration.Description != registration.Description)
+                    {
+                        existingRegistration.Description = registration.Description;
+                        sendRegistration = true;                        
+                    }
                 }
                 existingRegistration.LastRegistrationUtc = utcNow;
 
-                setActive = _activeRegistration == null;
+                if (_activeRegistration == null)
+                    setActive = true;
             }
 
-            await _hubContext.Clients.All.SendAsync(HubRegisterEvent, existingRegistration);
+            if (sendRegistration)
+                await _hubContext.Clients.All.SendAsync(HubRegisterEvent, existingRegistration);
             if (setActive)
                 await SetActiveAsync(existingRegistration.Id);
         }
@@ -106,12 +109,13 @@ namespace Soundboard.Server.Services
                 if (registration == null)
                     throw new RegistrationNotFoundException(id);
 
-                resetActive = registration?.Id == _activeRegistration?.Id;
+                if (registration.Id == _activeRegistration?.Id)
+                    resetActive = true;
                 _registrations.Remove(registration);
             }
 
             if (resetActive)
-                await this.SetActiveAsync(null);
+                await SetActiveAsync(null);
             await _hubContext.Clients.All.SendAsync(HubUnregisterEvent, registration);
         }
 

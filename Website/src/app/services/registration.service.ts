@@ -11,9 +11,11 @@ import { map } from 'rxjs/operators';
 export class RegistrationService implements OnDestroy {
   public readonly onActiveRegistrationChanged = new Subject<Readonly<IRegistration>>();
   public readonly onDescriptionChanged = new Subject<string>();
+  public readonly onRegistrationsChanged = new Subject();
 
   private readonly id: string;
   private readonly subscriptionContainer: SubscriptionContainer;
+  private readonly initialized: Promise<any>;
   private registrations: Readonly<IRegistration>[];
   private activeRegistration?: Readonly<IRegistration>;
   private description?: string;
@@ -32,33 +34,31 @@ export class RegistrationService implements OnDestroy {
       description: this.description
     }];
 
-    this.api.registrationGetAll().subscribe((registrations) => {
-      this.registrations = registrations;
-      this.api.registrationGetActive().subscribe((activeRegistration) => {
-        this.onSetActive(activeRegistration);
-      });
-    });
-
     this.subscriptionContainer = new SubscriptionContainer(
       this.api.onRegistrationRegistered.subscribe((registration) => this.onRegister(registration)),
       this.api.onRegistrationUnregistered.subscribe((registration) => this.onUnregister(registration)),
       this.api.onRegistrationActiveChanged.subscribe((registration) => this.onSetActive(registration)),
     );
 
-    if (this.description) {
-      this.register().subscribe();
-    }
+    this.initialized = (async () => {
+      this.registrations = await this.api.registrationGetAll();
+      this.onSetActive(await this.api.registrationGetActive());
+  
+      if (this.description) {
+        await this.register();
+      }
+    })();
   }
 
-  ngOnDestroy() {
+  async ngOnDestroy() {
     this.subscriptionContainer.unSubscribeAll();
     if (this.description) {
       this.description = undefined;
-      this.register().subscribe();
+      await this.register();
     }
   }
 
-  public setDescription(description?: string) {
+  public async setDescription(description?: string) {
     this.description = description;
     if (this.description) {
       localStorage.setItem('description', description);
@@ -66,32 +66,40 @@ export class RegistrationService implements OnDestroy {
       localStorage.removeItem('description');
     }
 
-    return this.register();
+    await this.initialized;
+    await this.register();
   }
 
   public getRegistrationId = () => this.id;
   public getDescription = () => this.description;
-  public getRegistrations = () => this.registrations;
-  public getActiveRegistration = () => this.activeRegistration;
 
-  public setActiveRegistration(activeRegistration?: Readonly<IRegistration>) {
-    return this.api.registrationSetActive(activeRegistration != null ? activeRegistration.id : undefined);
+  public async getRegistrations() {
+    await this.initialized;
+    return this.registrations;
   }
 
-  private register(): Observable<void> {
+  public async getActiveRegistration() {
+    await this.initialized;
+    return this.activeRegistration;
+  }
+
+  public async setActiveRegistration(activeRegistration?: Readonly<IRegistration>) {
+    await this.api.registrationSetActive(activeRegistration != null ? activeRegistration.id : undefined);
+  }
+
+  private async register() {
     if (this.registrationTimer) {
       clearTimeout(this.registrationTimer);
     }
 
     if (this.description) {
-      return this.api.registrationRegister({
+      await this.api.registrationRegister({
         id: this.id,
         description: this.description
-      }).pipe(map((_) => {
-        this.registrationTimer = setTimeout(() => this.register().subscribe(), 60000);
-      }));
+      });
+      this.registrationTimer = setTimeout(() => this.register(), 60000);
     } else {
-      return this.api.registrationUnregister(this.id).pipe(map((_) => {}));
+      await this.api.registrationUnregister(this.id);
     }
   }
 
@@ -102,6 +110,7 @@ export class RegistrationService implements OnDestroy {
     } else {
       this.registrations.push(registration);
     }
+    this.onRegistrationsChanged.next();
     if (registration.id === this.id) {
       this.description = registration.description;
       this.onDescriptionChanged.next(this.description);
@@ -112,6 +121,7 @@ export class RegistrationService implements OnDestroy {
     const index = this.registrations.findIndex((r) => r.id === registration.id);
     if (index >= 0) {
       this.registrations.splice(index);
+      this.onRegistrationsChanged.next();
     }
   }
 

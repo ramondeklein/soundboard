@@ -25,33 +25,38 @@ export class CatalogService implements OnDestroy {
   public readonly refreshed = new Subject<Category[]>();
   public readonly sampleUpdated = new Subject<Readonly<Sample>>();
   private readonly subscriptionContainer: SubscriptionContainer;
+  private readonly initialized: Promise<any>;
   private categories: Category[] = [];
 
   constructor(private readonly api: ApiService) {
     this.subscriptionContainer = new SubscriptionContainer(
-      this.api.onScan.subscribe(() => this.refresh().subscribe()),
+      this.api.onScan.subscribe(async () => await this.refresh()),
       this.api.onSampleUpdated.subscribe((backEndSample) => this.onSampleUpdated(backEndSample))
     );
-    this.refresh().subscribe();
+    this.initialized = this.refreshInternal();
   }
 
   ngOnDestroy() {
     this.subscriptionContainer.unSubscribeAll();
   }
 
-  public scan() {
-    return this.api.sampleScan();
+  public async scan() {
+    await this.initialized;
+    await this.api.sampleScan();
   }
 
-  public refresh() {
-    return this.getCategories().pipe(map((_) => { }));
+  public async refresh() {
+    await this.initialized;
+    await this.refreshInternal();
   }
 
-  public getCatagories() {
+  public async getCategories() {
+    await this.initialized;
     return this.categories;
   }
 
-  public getSampleByQueuedSample(queuedSample: IQueuedSample) {
+  public async getSampleByQueuedSample(queuedSample: IQueuedSample) {
+    await this.initialized;
     if (queuedSample) {
       const category = this.categories.find(c => c.getTitle() === queuedSample.category);
       if (category) {
@@ -63,28 +68,27 @@ export class CatalogService implements OnDestroy {
     }
   }
 
-  private getCategories(): Observable<Category[]> {
-    return this.api.sampleGetAll().pipe(map(backEndSamples => {
-      const categories: Category[] = [];
-      for (const backEndSample of backEndSamples) {
-        for (const backEndLocation of backEndSample.locations) {
-          const categoryName = backEndLocation.category;
-          let category = categories.find(c => c.getTitle() === categoryName);
-          if (category == null) {
-            category = new Category(categoryName);
-            categories.push(category);
-          }
-          category.addSample(new Sample(category, backEndLocation.title, backEndSample));
+  private async refreshInternal() {
+    const backEndSamples = await this.api.sampleGetAll();
+    const categories: Category[] = [];
+    for (const backEndSample of backEndSamples) {
+      for (const backEndLocation of backEndSample.locations) {
+        const categoryName = backEndLocation.category;
+        let category = categories.find(c => c.getTitle() === categoryName);
+        if (category == null) {
+          category = new Category(categoryName);
+          categories.push(category);
         }
+        category.addSample(new Sample(category, backEndLocation.title, backEndSample));
       }
-      for (const category of categories) {
-        category.getSamples().sort((s1, s2) => compareNames(s1.getTitle(), s2.getTitle()));
-      }
-      categories.sort((c1, c2) => compareNames(c1.getTitle(), c2.getTitle()));
-      this.categories = categories;
-      this.refreshed.next();
-      return categories;
-    }));
+    }
+    for (const category of categories) {
+      category.getSamples().sort((s1, s2) => compareNames(s1.getTitle(), s2.getTitle()));
+    }
+    categories.sort((c1, c2) => compareNames(c1.getTitle(), c2.getTitle()));
+    this.categories = categories;
+    this.refreshed.next();
+    return categories;
   }
 
   private onSampleUpdated(backEndSample: IBackEndSample) {

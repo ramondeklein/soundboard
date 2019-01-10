@@ -28,11 +28,11 @@ export class PlayerService implements OnDestroy {
     this.subscriptionContainer = new SubscriptionContainer(
       this.registration.onActiveRegistrationChanged.subscribe((r) => this.onActiveRegistrationChanged(r)),
       this.api.onPlayListSampleEnqueued.subscribe(() => this.playNextSample()),
-      this.api.onPlayingStarted.subscribe((queuedSample) => this.onSampleStarted.next(this.getSamplePlayInfo(queuedSample))),
-      this.api.onPlayingFinished.subscribe((queuedSample) => this.onSampleFinished.next(this.getSamplePlayInfo(queuedSample)))
+      this.api.onPlayingStarted.subscribe(async (queuedSample) => this.onSampleStarted.next(await this.getSamplePlayInfo(queuedSample))),
+      this.api.onPlayingFinished.subscribe(async (queuedSample) => this.onSampleFinished.next(await this.getSamplePlayInfo(queuedSample)))
     );
 
-    this.onActiveRegistrationChanged(this.registration.getActiveRegistration());
+    this.registration.getActiveRegistration().then((activeRegistration) => this.onActiveRegistrationChanged(activeRegistration));
   }
 
   ngOnDestroy() {
@@ -41,8 +41,8 @@ export class PlayerService implements OnDestroy {
 
   public getIsPlaying = () => this.isPlaying;
 
-  private getSamplePlayInfo(queuedSample: Readonly<IQueuedSample>) {
-    const sample = this.catalog.getSampleByQueuedSample(queuedSample);
+  private async getSamplePlayInfo(queuedSample: Readonly<IQueuedSample>) {
+    const sample = await this.catalog.getSampleByQueuedSample(queuedSample);
     const playInfo = new SamplePlayInfo(sample);
     return playInfo;
   }
@@ -51,7 +51,7 @@ export class PlayerService implements OnDestroy {
     const sound = new Howl({
       src: [this.api.sampleGetStreamUrl(queuedSample.sampleId)],
       format: 'mp3',
-      onload: () => this.api.playingStarted(queuedSample).subscribe(),
+      onload: async () => await this.api.playingStarted(queuedSample),
       onloaderror: (_, err) => {
         console.error(`Cannot load sample '${queuedSample.sampleId}': ${err.message}`);
         this.isPlaying = false;
@@ -62,36 +62,36 @@ export class PlayerService implements OnDestroy {
         this.isPlaying = false;
         this.playNextSample();
       },
-      onend: () => {
+      onend: async () => {
         this.isPlaying = false;
-        this.api.playingFinished(queuedSample).subscribe(() => this.playNextSample());
+        await this.api.playingFinished(queuedSample);
+        this.playNextSample();
       }
     });
     sound.play();
   }
 
-  private playNextSample() {
+  private async playNextSample() {
     if (this.isActivePlayer && !this.isPlaying) {
       this.isPlaying = true;
-      this.api.playListPopSample().subscribe(
-        (queuedSample: IQueuedSample) => {
-          if (queuedSample) {
-            const sample = this.catalog.getSampleByQueuedSample(queuedSample);
-            if (!sample) {
-              console.error(`Cannot find sample '${queuedSample.category}${queuedSample.title}'.`);
-              this.isPlaying = false;
-              return;
-            }
-            this.playSample(queuedSample);
-          } else {
+      try
+      {
+        const queuedSample = await this.api.playListPopSample();
+        if (queuedSample) {
+          const sample = this.catalog.getSampleByQueuedSample(queuedSample);
+          if (!sample) {
+            console.error(`Cannot find sample '${queuedSample.category}${queuedSample.title}'.`);
             this.isPlaying = false;
+            return;
           }
-        },
-        err => {
-          console.error(`Cannot determine next sample (pop failed): ${err.message}`);
+          this.playSample(queuedSample);
+        } else {
           this.isPlaying = false;
         }
-      );
+      } catch (err) {
+        console.error(`Cannot determine next sample (pop failed): ${err.message}`);
+        this.isPlaying = false;
+      }
     }
   }
 

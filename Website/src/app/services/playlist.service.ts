@@ -26,8 +26,8 @@ export class PlayListService implements OnDestroy {
     this.subscriptionContainer.unSubscribeAll();
   }
 
-  public enqueueSample(sample: Readonly<Sample>) {
-    return this.api.playListEnqueueSample({
+  public async enqueueSample(sample: Readonly<Sample>) {
+    await this.api.playListEnqueueSample({
       sampleId: sample.getId(),
       category: sample.getCategory().getTitle(),
       title: sample.getTitle(),
@@ -46,15 +46,15 @@ export class PlayListService implements OnDestroy {
     return this.sampleHistory.slice(0, lastItems);
   }
 
-  private onItemAddedToPlayList(queuedSample: IQueuedSample) {
-    const sample = this.catalog.getSampleByQueuedSample(queuedSample);
+  private async onItemAddedToPlayList(queuedSample: IQueuedSample) {
+    const sample = await this.catalog.getSampleByQueuedSample(queuedSample);
     if (sample) {
       this.playList.push(sample);
     }
   }
 
-  private onItemPoppedFromPlayList(queuedSample: IQueuedSample) {
-    const sample = this.catalog.getSampleByQueuedSample(queuedSample);
+  private async onItemPoppedFromPlayList(queuedSample: IQueuedSample) {
+    const sample = await this.catalog.getSampleByQueuedSample(queuedSample);
     if (sample) {
       const index = this.playList.findIndex(s => s === sample);
       if (index >= 0) {
