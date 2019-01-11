@@ -6,6 +6,7 @@
 /bin
 
 # Compiled Website output
+/Publish
 /Website/dist
 /Website/tmp
 /Website/out-tsc
@@ -21,3 +22,6 @@ Thumbs.db
 
 # Database
 .soundboard.db
+
+# IDE files
+/.vs

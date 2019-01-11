@@ -21,7 +21,7 @@ export interface IRegistration {
   providedIn: 'root'
 })
 export class ApiService {
-  private static readonly baseUrl = 'http://localhost:5000/api/'; // TODO: Fetch from a service
+  private static readonly baseUrl = '/api/';
   private readonly enableLogging = true;
 
   public readonly onScan = new Subject();
